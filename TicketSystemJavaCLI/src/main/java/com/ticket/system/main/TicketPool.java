@@ -1,34 +1,46 @@
 package com.ticket.system.main;
-import java.util.concurrent.locks.ReentrantLock;
-import com.ticket.system.config.Config;
 
 public class TicketPool {
-    private int currentNoOfTickets = 0;
-    private int maxTicketCapacity;
+    private int tickets;
+    private final int maxTickets;
 
-    public TicketPool(Config config) {
-        this.maxTicketCapacity = config.getMaxTicketCapacity();
+    public TicketPool(int maxTickets) {
+        this.tickets = 0;
+        this.maxTickets = maxTickets;
     }
 
-    public int getCurrentNoOfTickets() {
-        return currentNoOfTickets;
-    }
-
-    public boolean addTicket() {
-        if (currentNoOfTickets < maxTicketCapacity) {
-            currentNoOfTickets++;
-            System.out.println("Ticket added by vendor");
-            return true;
+    public synchronized void addTickets(int ticketAmount) {
+        try {
+            while (tickets + ticketAmount > maxTickets) {
+                System.out.println("Current pool is full! Vendor is waiting to add tickets.");
+                wait();
+            }
+            tickets += ticketAmount;
+            System.out.println(ticketAmount + " number of tickets added by vendor. Total tickets now: " + tickets);
+            notifyAll();
         }
-        return false;
+        catch (InterruptedException e) {
+            System.out.println("Error");
+        }
     }
 
-    public boolean removeTicker() {
-        if (currentNoOfTickets > 0) {
-            currentNoOfTickets--;
-            System.out.println("Ticker purchased by customer");
-            return true;
+    public synchronized void removeTicket() {
+        try {
+            while (tickets <= 0) {
+                System.out.println("No tickets available. Customer is waiting...");
+                wait();
+            }
+            tickets--;
+            System.out.println("Ticket purchased by a customer. tickets left: " + tickets);
+            notifyAll();
         }
-        return false;
+        catch (InterruptedException e) {
+            System.out.println("Error");
+        }
     }
+
+    public int getTickets() {
+        return tickets;
+    }
+
 }
