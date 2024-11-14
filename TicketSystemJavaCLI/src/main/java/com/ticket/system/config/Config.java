@@ -1,19 +1,19 @@
 package com.ticket.system.config;
 
 public class Config {
-    private final int totalTickets;
-    private final int ticketReleaseRate;
-    private final int customerRetrievalRate;
-    private final int maxTicketCapacity;
+    private int totalTickets;
+    private int ticketReleaseRate;
+    private int customerRetrievalRate;
+    private int maxTicketCapacity;
 
     public Config(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity){
-        this.totalTickets = validateNumber(totalTickets, "Total number of tickets");
-        this.ticketReleaseRate = validateNumber(ticketReleaseRate, "Ticket release rate");
-        this.customerRetrievalRate = validateNumber(customerRetrievalRate, "Customer retrieval rate");
-        this.maxTicketCapacity = validateMaximumNumber(validateNumber(maxTicketCapacity," Maximum ticket capacity"), this.totalTickets);
+        this.totalTickets = totalTickets;
+        this.ticketReleaseRate = ticketReleaseRate;
+        this.customerRetrievalRate = customerRetrievalRate;
+        this.maxTicketCapacity = maxTicketCapacity;
     }
 
-    private int validateNumber(int num, String description) {
+    public static int isValidNumber(int num, String description) {
         if (num <= 0) {
             throw new IllegalArgumentException(description + " must be greater than zero!");
         }
@@ -21,9 +21,9 @@ public class Config {
 
     }
 
-    private int validateMaximumNumber(int maxTicketCapacity, int totalTickets){
+    public static int isValidMaximumNumber(int maxTicketCapacity, int totalTickets){
         if(maxTicketCapacity > totalTickets) {
-            throw new IllegalArgumentException("Maximum ticket capacity cannot be greater than the total number of available tickets!");
+            throw new IllegalArgumentException("Maximum ticket capacity cannot be greater than the total number of tickets!");
         }
         return maxTicketCapacity;
     }
@@ -32,15 +32,31 @@ public class Config {
         return maxTicketCapacity;
     }
 
+    public void setMaxTicketCapacity(int maxTicketCapacity) {
+        this.maxTicketCapacity = maxTicketCapacity;
+    }
+
     public int getTicketReleaseRate() {
         return ticketReleaseRate;
+    }
+
+    public void setTicketReleaseRate(int ticketReleaseRate) {
+        this.ticketReleaseRate = ticketReleaseRate;
     }
 
     public int getCustomerRetrievalRate() {
         return customerRetrievalRate;
     }
 
+    public void setCustomerRetrievalRate(int customerRetrievalRate) {
+        this.customerRetrievalRate = customerRetrievalRate;
+    }
+
     public int getTotalTickets() {
         return totalTickets;
+    }
+
+    public void setTotalTickets(int totalTickets) {
+        this.totalTickets = totalTickets;
     }
 }
