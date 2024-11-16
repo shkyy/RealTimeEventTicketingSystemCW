@@ -29,20 +29,20 @@ public class Main {
         Config config = new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
 
-//        try {
-//            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
-//
-//            config.setTicketReleaseRate(ticketReleaseRate);
-//
-//            // vendor and customer threads for testing
-//            Thread vendor = new Thread(new Vendor(vendorId, config.getTicketReleaseRate(), 5, ticketPool));
-//            Thread customer = new Thread(new Customer("Customer1", config.getCustomerRetrievalRate(), ticketPool));
-//
-//            vendor.start();
-//
-//        } catch (IllegalArgumentException e) {
-//            System.out.println("Error: " + e.getMessage());
-//        }
+        try {
+            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
+
+            config.setTicketReleaseRate(ticketReleaseRate);
+
+            // vendor and customer threads for testing
+            Thread vendor = new Thread(new Vendor(vendorId, config.getTicketReleaseRate(), 5, ticketPool));
+            Thread customer = new Thread(new Customer("Customer1", config.getCustomerRetrievalRate(), ticketPool));
+
+            vendor.start();
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
 
 
