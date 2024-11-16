@@ -1,6 +1,7 @@
 package com.ticket.system.main;
 
 import com.ticket.system.config.Config;
+import com.ticket.system.config.TicketConfigClient;
 
 import java.util.InputMismatchException;
 import java.util.Objects;
@@ -9,7 +10,7 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         int totalTickets = 0;
         int maxTicketCapacity;
@@ -25,24 +26,25 @@ public class Main {
         ticketReleaseRate = getValidNumber(totalTickets, "the ticket release rate");
         customerRetrievalRate = getValidNumber(totalTickets, "the customer retrieval rate");
 
+        TicketConfigClient.sendConfig(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
         Config config = new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
 
-        try {
-            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
-
-            config.setTicketReleaseRate(ticketReleaseRate);
-
-            // vendor and customer threads for testing
-            Thread vendor = new Thread(new Vendor(vendorId, config.getTicketReleaseRate(), 5, ticketPool));
-            Thread customer = new Thread(new Customer("Customer1", config.getCustomerRetrievalRate(), ticketPool));
-
-            vendor.start();
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+//        try {
+//            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
+//
+//            config.setTicketReleaseRate(ticketReleaseRate);
+//
+//            // vendor and customer threads for testing
+//            Thread vendor = new Thread(new Vendor(vendorId, config.getTicketReleaseRate(), 5, ticketPool));
+//            Thread customer = new Thread(new Customer("Customer1", config.getCustomerRetrievalRate(), ticketPool));
+//
+//            vendor.start();
+//
+//        } catch (IllegalArgumentException e) {
+//            System.out.println("Error: " + e.getMessage());
+//        }
 
 
 

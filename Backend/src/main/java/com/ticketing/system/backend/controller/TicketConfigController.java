@@ -13,8 +13,9 @@ public class TicketConfigController {
     @Autowired
     TicketConfigRepo repo;
 
-    @PostMapping("/addConfiguration")
-    public void addConfiguration (@RequestBody Ticket ticketConfig) {
+    @PostMapping("/f")
+    public String addConfiguration (@RequestBody Ticket ticketConfig) {
         repo.save(ticketConfig);
+        return "Config details save successfully";
     }
 }
