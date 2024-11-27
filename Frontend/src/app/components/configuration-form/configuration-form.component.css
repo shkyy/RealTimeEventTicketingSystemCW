@@ -1,0 +1,33 @@
+div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-top: 50px;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+input[type=number], select {
+    width: 100%;
+    margin: 8px 0;
+    display: inline-block;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button[type=submit] {
+    width: 100%;
+    background-color: #3796f5;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type=submit]:hover {
+    background-color: #3083d6;
+}
