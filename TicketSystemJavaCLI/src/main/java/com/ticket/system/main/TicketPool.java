@@ -1,46 +1,46 @@
 package com.ticket.system.main;
 
+import java.util.*;
+
 public class TicketPool {
-    private int tickets;
-    private final int maxTickets;
+    private Queue<Ticket> ticketQueue;
+    private int maximumTicketCapacity;
 
-    public TicketPool(int maxTickets) {
-        this.tickets = 0;
-        this.maxTickets = maxTickets;
+    public TicketPool(int maximumTicketCapacity) {
+        this.ticketQueue = new LinkedList<>();
+        this.maximumTicketCapacity = maximumTicketCapacity;
     }
 
-    public synchronized void addTickets(int ticketAmount) {
-        try {
-            while (tickets + ticketAmount > maxTickets) {
+        public synchronized void addTickets(Ticket ticket) {
+
+            while (ticketQueue.size() >= maximumTicketCapacity) {
                 System.out.println("Current pool is full! Vendor is waiting to add tickets.");
-                wait();
+                try {
+                    wait();
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }
             }
-            tickets += ticketAmount;
-            System.out.println(ticketAmount + " number of tickets added by vendor. Total tickets now: " + tickets);
+
+            this.ticketQueue.add(ticket);
             notifyAll();
-        }
-        catch (InterruptedException e) {
-            System.out.println("Error");
-        }
+            System.out.println("Ticket added by - " + Thread.currentThread().getName() + ", current ticket amount: " + ticketQueue.size());
     }
 
-    public synchronized void removeTicket() {
-        try {
-            while (tickets <= 0) {
-                System.out.println("No tickets available. Customer is waiting...");
+    public synchronized Ticket buyTicket() {
+        while (ticketQueue.isEmpty()) {
+            System.out.println("No tickets available. Customer is waiting...");
+            try {
                 wait();
+            } catch (InterruptedException e){
+                throw new RuntimeException(e.getMessage());
             }
-            tickets--;
-            System.out.println("Ticket purchased by a customer. tickets left: " + tickets);
+        }
+            Ticket ticket = ticketQueue.poll();
             notifyAll();
-        }
-        catch (InterruptedException e) {
-            System.out.println("Error");
-        }
-    }
-
-    public int getTickets() {
-        return tickets;
+            System.out.println("Ticket bought by - " + Thread.currentThread().getName() + "tickets left: " + ticketQueue.size());
+            return ticket;
     }
 
 }

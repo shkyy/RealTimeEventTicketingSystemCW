@@ -22,8 +22,8 @@ public class Config {
     }
 
     public static int isValidMaximumNumber(int maxTicketCapacity, int totalTickets){
-        if(maxTicketCapacity > totalTickets) {
-            throw new IllegalArgumentException("Maximum ticket capacity cannot be greater than the total number of tickets!");
+        if(maxTicketCapacity < totalTickets) {
+            throw new IllegalArgumentException("Maximum ticket capacity cannot be less than the total number of tickets!");
         }
         return maxTicketCapacity;
     }

@@ -4,14 +4,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Setter
 @Getter
 @Table (name = "Ticket_Configuration")
 @Entity
 @Data
-public class Ticket {
+public class TicketConfigSettingModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

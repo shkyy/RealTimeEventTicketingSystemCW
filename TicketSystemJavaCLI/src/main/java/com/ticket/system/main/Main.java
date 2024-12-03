@@ -17,10 +17,6 @@ public class Main {
         int ticketReleaseRate;
         int customerRetrievalRate;
 
-
-        System.out.println("Enter vendor ID: ");
-        String vendorId = scanner.nextLine();
-
         totalTickets = getValidNumber(totalTickets, "the total number tickets");
         maxTicketCapacity = getValidNumber(totalTickets, "the maximum number tickets");
         ticketReleaseRate = getValidNumber(totalTickets, "the ticket release rate");
@@ -31,23 +27,26 @@ public class Main {
         Config config = new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
 
-//        try {
-//            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
-//
-//            config.setTicketReleaseRate(ticketReleaseRate);
-//
-//            // vendor and customer threads for testing
-//            Thread vendor = new Thread(new Vendor(vendorId, config.getTicketReleaseRate(), 5, ticketPool));
-//            Thread customer = new Thread(new Customer("Customer1", config.getCustomerRetrievalRate(), ticketPool));
-//
-//            vendor.start();
-//
-//        } catch (IllegalArgumentException e) {
-//            System.out.println("Error: " + e.getMessage());
-//        }
+        try {
+            TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
 
+            Vendor[] vendors = new Vendor[2];
+            for (int i = 0; i < vendors.length; i++) {
+                vendors[i] = new Vendor(config.getTicketReleaseRate(), ticketPool, config.getTotalTickets());
+                Thread vendorThread = new Thread(vendors[i], "Vendor ID-" + i);
+                vendorThread.start();
+            }
 
+            Customer[] customers = new Customer[2]; // Creating array of customers
+            for (int i = 0; i < customers.length; i++) {
+                customers[i] = new Customer(config.getCustomerRetrievalRate(), ticketPool, 1);
+                Thread customerThread = new Thread(customers[i], "Customer ID-" + i);
+                customerThread.start();
+            }
 
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
     private static int getValidNumber(int totalTickets, String valueDescription) {
         while(true) {
