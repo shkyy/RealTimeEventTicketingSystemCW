@@ -3,11 +3,12 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../services/websocket.service';
 import { Config } from '../../interfaces/config';
+import { LogDisplayComponent } from '../log-display/log-display.component';
 
 @Component({
   selector: 'app-configuration-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, LogDisplayComponent],
   templateUrl: './configuration-form.component.html',
   styleUrls: ['./configuration-form.component.css'],
 })
@@ -15,8 +16,6 @@ import { Config } from '../../interfaces/config';
 
 export class ConfigurationFormComponent implements OnInit {
  
-  configParams: Config[] = [];
-
   form: FormGroup = new FormGroup({
     totalTickets: new FormControl<number>(0, Validators.required),
     maxTicketCapacity: new FormControl<number>(0, Validators.required),
@@ -27,22 +26,13 @@ export class ConfigurationFormComponent implements OnInit {
   constructor(private webSocketService: WebSocketService) {}
 
   ngOnInit(): void {
-    this.webSocketService.listen(config => this.configParams.push(config))
+    this.webSocketService.listen('/topic/tickets', (message) => console.log('Acknowledgement or log: ', message))
   }
 
-  add(totalTickets: number, maxTicketCapacity: number, ticketReleaseRate: number, customerRetrievalRate: number): void {
-    const config: Config = {
-      totalTickets: totalTickets,
-      maxTicketCapacity: maxTicketCapacity,
-      ticketReleaseRate: ticketReleaseRate,
-      customerRetrievalRate: customerRetrievalRate
-    };
-    this.webSocketService.send(config);
-  }
-
-  click(): void {
-    this.add(this.form.value.totalTickets, this.form.value.maxTicketCapacity, this.form.value.ticketReleaseRate, this.form.value.customerRetrievalRate);
-    this.form.reset({});
+  submit(): void {
+    const config: Config = this.form.value;
+    this.webSocketService.send('/app/config', config);
+    this.form.reset();
   }
   
 }

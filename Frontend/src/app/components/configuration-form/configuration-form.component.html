@@ -14,15 +14,11 @@
       <input id="maxTicketCapacity" type="number" formControlName="maxTicketCapacity"/>
   
       <div class="btn-container">
-        <button type="button" (click)="click()">Start</button>
+        <button type="button" (click)="submit()">Start</button>
       </div>
     </form>
 
-    <div class="messages">
-      <h3>Ticket Transactions:</h3>
-      <ul>
-        <li *ngFor="let config of configParams">{{ config.totalTickets }}</li>
-      </ul>
-    </div>
+    <app-log-display/>
+
   </div>
   

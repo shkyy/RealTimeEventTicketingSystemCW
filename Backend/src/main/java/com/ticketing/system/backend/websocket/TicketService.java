@@ -3,7 +3,6 @@ package com.ticketing.system.backend.websocket;
 import com.ticketing.system.backend.class_model.Customer;
 import com.ticketing.system.backend.class_model.TicketPool;
 import com.ticketing.system.backend.class_model.Vendor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +10,20 @@ import org.springframework.stereotype.Service;
 public class TicketService {
     private TicketPool ticketPool;
 
-    @Autowired
-    SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
+
+    public TicketService(SimpMessagingTemplate template) {
+        this.template = template;
+    }
 
     public void startThreads(int releaseRate, int retrievalRate, int maxTicketCapacity) {
 
         this.ticketPool = new TicketPool(maxTicketCapacity);
+
+        // Set log listener to send logs via WebSocket
+        ticketPool.setLogListener(logMessage ->
+                template.convertAndSend("/topic/tickets", logMessage)
+        );
 
         Vendor[] vendors = new Vendor[2];
         for (int i = 0; i < vendors.length; i++) {
@@ -32,12 +39,7 @@ public class TicketService {
             customerThread.start();
         }
 
-        notifyFrontend("Threads started for ticket management.");
     }
 
-    public void notifyFrontend(String message) {
-
-         template.convertAndSend("/topic/config", message);
-    }
 
 }

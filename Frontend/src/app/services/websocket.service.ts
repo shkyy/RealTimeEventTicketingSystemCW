@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import * as StompJS from '@stomp/stompjs';
 import { Config } from '../interfaces/config';
 
-export type ListnerCallBack = (message: Config) => void; 
+export type ListnerCallBack = (message: string) => void; 
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +20,16 @@ export class WebSocketService implements OnDestroy{
     this.connection.connect({}, () => {});
   }
 
-  public send(config: Config): void {
+  public send<T>(destination: string, payload: T): void {
     if(this.connection && this.connection.connected) {
-      this.connection.send('/app/config', {}, JSON.stringify(config));
+      this.connection.send(destination, {}, JSON.stringify(payload));
     }
   }
 
-  public listen(fun: ListnerCallBack): void {
+  public listen(destination: string, callback: ListnerCallBack): void {
     if(this.connection) {
       this.connection.connect({}, () => {
-        this.subscription = this.connection!.subscribe('/topic/tickets', message => fun(JSON.parse(message.body)));
+        this.subscription = this.connection!.subscribe(destination, (message) => callback(message.body));
       })
     }
   }
