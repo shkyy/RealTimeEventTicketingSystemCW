@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) throws Exception {
+    public  static void main(String[] args) throws Exception {
 
         int totalTickets = 0;
         int maxTicketCapacity;

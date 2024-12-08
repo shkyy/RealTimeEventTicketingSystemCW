@@ -1,19 +1,28 @@
 <div class="configuration-form">
     <h2>Configuration Settings</h2>
-    <form>
-      <label for="totalTickets">Total Tickets:</label>
-      <input id="totalTickets" type="number" name="totalTickets" required />
+    <form [formGroup]="form">
+      <label>Total Tickets:</label>
+      <input id="totalTickets" type="number" formControlName="totalTickets"/>
   
       <label for="ticketReleaseRate">Ticket Release Rate:</label>
-      <input id="ticketReleaseRate" type="number" name="ticketReleaseRate" required />
+      <input id="ticketReleaseRate" type="number" formControlName="ticketReleaseRate"/>
   
       <label for="customerRetrievalRate">Customer Retrieval Rate:</label>
-      <input id="customerRetrievalRate" type="number" name="customerRetrievalRate" required />
+      <input id="customerRetrievalRate" type="number" formControlName="customerRetrievalRate"/>
   
       <label for="maxTicketCapacity">Max Ticket Capacity:</label>
-      <input id="maxTicketCapacity" type="number" name="maxTicketCapacity" required />
+      <input id="maxTicketCapacity" type="number" formControlName="maxTicketCapacity"/>
   
-      <button type="submit">Submit</button>
+      <div class="btn-container">
+        <button type="button" (click)="click()">Start</button>
+      </div>
     </form>
+
+    <div class="messages">
+      <h3>Ticket Transactions:</h3>
+      <ul>
+        <li *ngFor="let config of configParams">{{ config.totalTickets }}</li>
+      </ul>
+    </div>
   </div>
   
