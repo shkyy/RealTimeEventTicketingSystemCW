@@ -1,5 +1,8 @@
 package com.ticketing.system.backend.class_model;
 
+import com.ticketing.system.backend.enums.UserType;
+import com.ticketing.system.backend.websocket.TicketService;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -7,6 +10,7 @@ public class TicketPool {
     private Queue<Ticket> ticketQueue;
     private int maximumTicketCapacity;
     private Consumer<String> logListener; // Log listener to handle logs
+    private TicketService ticketService;
 
     public TicketPool(int maximumTicketCapacity) {
         this.ticketQueue = new LinkedList<>();
@@ -32,6 +36,7 @@ public class TicketPool {
         this.ticketQueue.add(ticket);
         notifyAll();
         log("Ticket added by - " + Thread.currentThread().getName() + ", current ticket amount: " + ticketQueue.size());
+        ticketService.ticketLogDetails(UserType.Vendor, Thread.currentThread().getName(), "Ticket Added", ticket.getEventName());
     }
 
     public synchronized Ticket buyTicket() {
@@ -46,6 +51,7 @@ public class TicketPool {
         Ticket ticket = ticketQueue.poll();
         notifyAll();
         log("Ticket bought by - " + Thread.currentThread().getName() + "tickets left: " + ticketQueue.size());
+        ticketService.ticketLogDetails(UserType.Customer, Thread.currentThread().getName(), "Ticket Bought", ticket.getEventName());
         return ticket;
     }
 

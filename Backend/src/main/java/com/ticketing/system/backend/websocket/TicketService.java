@@ -3,6 +3,10 @@ package com.ticketing.system.backend.websocket;
 import com.ticketing.system.backend.class_model.Customer;
 import com.ticketing.system.backend.class_model.TicketPool;
 import com.ticketing.system.backend.class_model.Vendor;
+import com.ticketing.system.backend.db_model.TicketTransactionLogModel;
+import com.ticketing.system.backend.enums.UserType;
+import com.ticketing.system.backend.repo.TicketLogRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +15,9 @@ public class TicketService {
     private TicketPool ticketPool;
 
     private final SimpMessagingTemplate template;
+
+    @Autowired
+    TicketLogRepo logRepo;
 
     public TicketService(SimpMessagingTemplate template) {
         this.template = template;
@@ -38,6 +45,12 @@ public class TicketService {
             Thread customerThread = new Thread(customers[i], "Customer ID-" + i);
             customerThread.start();
         }
+
+    }
+
+    public void ticketLogDetails(UserType userType, String userId, String action, String eventName) {
+        TicketTransactionLogModel ticketLog = new TicketTransactionLogModel(userType, userId, action, eventName);
+        logRepo.save(ticketLog);
 
     }
 
