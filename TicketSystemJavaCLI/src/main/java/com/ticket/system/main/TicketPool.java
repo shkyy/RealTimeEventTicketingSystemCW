@@ -25,7 +25,7 @@ public class TicketPool {
 
             this.ticketQueue.add(ticket);
             notifyAll();
-            System.out.println("Ticket added by - " + Thread.currentThread().getName() + ", current ticket amount: " + ticketQueue.size());
+            System.out.println("Ticket ADDED by - " + Thread.currentThread().getName() + ", current ticket amount: " + ticketQueue.size() + "\n");
     }
 
     public synchronized Ticket buyTicket() {
@@ -39,7 +39,7 @@ public class TicketPool {
         }
             Ticket ticket = ticketQueue.poll();
             notifyAll();
-            System.out.println("Ticket bought by - " + Thread.currentThread().getName() + "tickets left: " + ticketQueue.size());
+            System.out.println("Ticket BOUGHT by - " + Thread.currentThread().getName() + "tickets left: " + ticketQueue.size() + "\n");
             return ticket;
     }
 

@@ -1,4 +1,4 @@
-package com.ticket.system.config;
+package com.ticket.system.clients;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;

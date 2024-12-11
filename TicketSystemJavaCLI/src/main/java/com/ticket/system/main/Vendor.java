@@ -17,34 +17,30 @@ public class Vendor implements Runnable {
     @Override
     public void run(){
 
-        for (int i = 1; i < totalSellingTickets; i++) {
-            Ticket ticket = new Ticket(i,"Event", new BigDecimal("1000"));
-            ticketPool.addTickets(ticket);
-            try {
-                Thread.sleep(releaseInterval * 1000); // To calculate to MS
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        while (true) {
+            synchronized (this) {
+                while (!Main.isRunning) { // Check the running state
+                    try {
+                        wait(); // Wait for resume notification
+                    } catch (InterruptedException e) {
+                        return; // Exit thread if interrupted
+                    }
+                }
+            }
+
+            for (int i = 1; i < totalSellingTickets; i++) {
+
+                if (!Main.isRunning) break;
+
+                Ticket ticket = new Ticket(i, "Event", new BigDecimal("1000"));
+                ticketPool.addTickets(ticket);
+                try {
+                    Thread.sleep(releaseInterval * 1000); // To calculate to MS
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
-//        try {
-//            int ticketId = 1;
-//
-//            while(true) {
-//
-//                for(int i = 1; i < totalSellingTickets; i++) {
-//                    Ticket ticket = new Ticket(ticketId++, "Event", new BigDecimal("500.00"));
-//                    ticketPool.addTickets(ticket);
-//                    System.out.println("Vendor: " + vendorId + ", released ticket: " + ticket);
-//                }
-//
-//                TimeUnit.SECONDS.sleep(releaseInterval);
-//            }
-//        }
-//        catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//            throw new RuntimeException(e);
-//        }
 
     }
 }

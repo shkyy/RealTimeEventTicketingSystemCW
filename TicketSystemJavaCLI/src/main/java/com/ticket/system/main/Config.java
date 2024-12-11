@@ -1,4 +1,4 @@
-package com.ticket.system.config;
+package com.ticket.system.main;
 
 public class Config {
     private int totalTickets;

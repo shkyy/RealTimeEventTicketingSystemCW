@@ -1,49 +1,50 @@
 package com.ticket.system.main;
 
-import com.ticket.system.config.Config;
-import com.ticket.system.config.TicketConfigClient;
+import com.ticket.system.clients.TicketConfigClient;
 
-import java.util.InputMismatchException;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-
+    public static volatile boolean isRunning = false;
     public  static void main(String[] args) throws Exception {
 
         int totalTickets = 0;
-        int maxTicketCapacity;
-        int ticketReleaseRate;
-        int customerRetrievalRate;
 
         totalTickets = getValidNumber(totalTickets, "the total number tickets");
-        maxTicketCapacity = getValidNumber(totalTickets, "the maximum number tickets");
-        ticketReleaseRate = getValidNumber(totalTickets, "the ticket release rate");
-        customerRetrievalRate = getValidNumber(totalTickets, "the customer retrieval rate");
+        int maxTicketCapacity = getValidNumber(totalTickets, "the maximum number tickets");
+        int ticketReleaseRate = getValidNumber(totalTickets, "the ticket release rate");
+        int customerRetrievalRate = getValidNumber(totalTickets, "the customer retrieval rate");
+        int noOfVendors = getValidNumber(totalTickets, "the number of vendors");
+        int noOfCustomers = getValidNumber(totalTickets, "the number of customers");
 
         TicketConfigClient.sendConfig(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
         Config config = new Config(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketCapacity);
 
 
+        Random random = new Random();
+        int ticketQuantity = random.nextInt(4);
+
         try {
             TicketPool ticketPool = new TicketPool(config.getMaxTicketCapacity());
 
-            Vendor[] vendors = new Vendor[2];
+            Vendor[] vendors = new Vendor[noOfVendors];
+            Thread[] vendorThreads = new Thread[noOfVendors];
             for (int i = 0; i < vendors.length; i++) {
                 vendors[i] = new Vendor(config.getTicketReleaseRate(), ticketPool, config.getTotalTickets());
-                Thread vendorThread = new Thread(vendors[i], "Vendor ID-" + i);
-                vendorThread.start();
+                vendorThreads[i] = new Thread(vendors[i], "Vendor ID- " + i);
             }
 
-            Customer[] customers = new Customer[2]; // Creating array of customers
+            Customer[] customers = new Customer[noOfCustomers];
+            Thread[] customerThreads = new Thread[noOfCustomers];
             for (int i = 0; i < customers.length; i++) {
-                customers[i] = new Customer(config.getCustomerRetrievalRate(), ticketPool, 1);
-                Thread customerThread = new Thread(customers[i], "Customer ID-" + i);
-                customerThread.start();
+                customers[i] = new Customer(config.getCustomerRetrievalRate(), ticketPool, ticketQuantity);
+                customerThreads[i] = new Thread(customers[i], "Customer ID- " + i);
             }
 
+            // Start listening for commands
+            listenCommands(vendorThreads, customerThreads);
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -71,6 +72,62 @@ public class Main {
             }
             catch (IllegalArgumentException e){
                 System.out.println(e.getMessage() + " Please enter again");
+            }
+        }
+    }
+
+    private static void startThreads(Thread[] threads) {
+        for (Thread thread : threads) {
+            if (!thread.isAlive()) {
+                thread.start();
+            }
+        }
+    }
+
+    private static void listenCommands (Thread[] vendorThreads, Thread[] customerThreads) {
+        while (true) {
+            System.out.println("Enter (start, stop, resume, exit): ");
+            String command = scanner.nextLine().trim().toLowerCase();
+
+            switch (command) {
+                case "start":
+                    if (!isRunning) {
+                        isRunning = true;
+                        System.out.println("Starting operations... "  + "\n");
+                        startThreads(vendorThreads);
+                        startThreads(customerThreads);
+                    } else {
+                        System.out.println("Operations are already running." + "\n");
+                    }
+                    break;
+
+                case "resume":
+                    if (!isRunning) {
+                        isRunning = true;
+                        synchronized (Main.class) {
+                            Main.class.notifyAll(); // Notify all paused threads
+                        }
+                        System.out.println("Resuming operations..." + "\n");
+                    } else {
+                        System.out.println("Operations are already running." + "\n");
+                    }
+                    break;
+
+                case "stop":
+                    if (isRunning) {
+                        isRunning = false;
+                        System.out.println("Stopping operations" + "\n");
+                    } else {
+                        System.out.println("operations are already stopped" + "\n");
+                    }
+                    break;
+
+                case "exit":
+                    System.out.println("Exiting program..." + "\n");
+                    System.exit(0);
+
+                default:
+                    System.out.println("Unknown command." + "\n");
             }
         }
     }

@@ -16,26 +16,29 @@ public class Customer implements Runnable {
     @Override
     public void run() {
 
-        for (int i = 0; i < ticketQuantity; i++) {
-            Ticket ticket = ticketPool.buyTicket(); // Call method to buyTickets
-            System.out.println("Ticket is - " + ticket + " - Customer name is - " + Thread.currentThread().getName());
-            try {
-                Thread.sleep(retrievalRate * 1000); // Retrieving delay
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        while (true) {
+            synchronized (this) {
+                while (!Main.isRunning) { // Check the running state
+                    try {
+                        wait(); // Wait for resume notification
+                    } catch (InterruptedException e) {
+                        return; // Exit thread if interrupted
+                    }
+                }
+            }
+
+            for (int i = 0; i < ticketQuantity; i++) {
+
+                if (!Main.isRunning) break;
+
+                ticketPool.buyTicket(); // Call method to buyTickets
+
+                try {
+                    Thread.sleep(retrievalRate * 1000); // Retrieving delay
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-
-//        try {
-//
-//            while(true) {
-//                Ticket ticket = ticketPool.buyTicket();
-//                System.out.println("Customer: " + customerId + "purchased the ticket: " + ticket);
-//                TimeUnit.SECONDS.sleep(retrievalRate);
-//            }
-//        }
-//        catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//        }
     }
 }
