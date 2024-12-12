@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../services/websocket.service';
@@ -14,25 +14,55 @@ import { LogDisplayComponent } from '../log-display/log-display.component';
 })
 
 
-export class ConfigurationFormComponent implements OnInit {
+export class ConfigurationFormComponent implements OnInit{
  
-  form: FormGroup = new FormGroup({
-    totalTickets: new FormControl<number>(0, Validators.required),
-    maxTicketCapacity: new FormControl<number>(0, Validators.required),
-    ticketReleaseRate: new FormControl<number>(0, Validators.required),
-    customerRetrievalRate: new FormControl<number>(0, Validators.required),
-  });
+  form: FormGroup;
+  showLogDisplay = false;
+  logs: string[] = [];
+  startListeningLogs = false;
 
-  constructor(private webSocketService: WebSocketService) {}
+  constructor(private webSocketService: WebSocketService) {
+    this.form = new FormGroup({
+      totalTickets: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+      ticketReleaseRate: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+      customerRetrievalRate: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+      maxTicketCapacity: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
+    });
+  }
 
   ngOnInit(): void {
-    this.webSocketService.listen('/topic/tickets', (message) => console.log('Acknowledgement or log: ', message))
+    // Subscribe to WebSocket logs
+    
   }
 
   submit(): void {
-    const config: Config = this.form.value;
-    this.webSocketService.send('/app/config', config);
-    this.form.reset();
+    if (this.form.valid) {
+      const config = this.form.value as Config;
+      this.webSocketService.send('/app/config', config);
+      this.showLogDisplay = true; // Show the modal after submitting the configuration
+    }
   }
-  
+
+  onStartLogs(): void {
+    if (!this.startListeningLogs) {
+        this.startListeningLogs = true;
+        this.webSocketService.listen('/topic/tickets', (log: string) => {
+            this.logs.push(log);
+        });
+    }
+    this.webSocketService.send('/app/resume', {});
+}
+
+  onPauseLogs(): void {
+    this.webSocketService.send('/app/pause', {});
+    console.log('Pause Logs');
+  }
+
+  onStopLogs(): void {
+    this.webSocketService.send('/app/stop', {});
+    this.logs = [];
+    this.startListeningLogs = false;
+    this.webSocketService.listen('/topic/tickets', () => {}); // Unsubscribe
+    this.form.reset();
+}
 }

@@ -1,25 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { WebSocketService } from '../../services/websocket.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ControlPanelComponent } from '../control-panel/control-panel.component';
 
 @Component({
     selector: 'app-log-display',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, ControlPanelComponent],
     templateUrl: './log-display.component.html',
     styleUrl: './log-display.component.css'
 })
-export class LogDisplayComponent implements OnInit{
-
-  logs: string[] = [];
-
-  constructor(private webSocketService: WebSocketService) {}
 
 
-  ngOnInit(): void {
-    this.webSocketService.listen('/topic/tickets', (logMessage) => this.logs.push(logMessage));
+export class LogDisplayComponent {
+  @Input() logs: string[] = [];
+  @Input() showLogs = false;
+
+  @Output() start = new EventEmitter<void>();
+  @Output() pause = new EventEmitter<void>();
+  @Output() stop = new EventEmitter<void>();
+
+  startLogs(): void {
+    this.start.emit();
   }
 
+  pauseLogs(): void {
+    this.pause.emit();
+  }
 
-
+  stopLogs(): void {
+    this.stop.emit();
+  }
 }
+

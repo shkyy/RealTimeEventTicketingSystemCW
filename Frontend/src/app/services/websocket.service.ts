@@ -27,12 +27,16 @@ export class WebSocketService implements OnDestroy{
   }
 
   public listen(destination: string, callback: ListnerCallBack): void {
-    if(this.connection) {
-      this.connection.connect({}, () => {
-        this.subscription = this.connection!.subscribe(destination, (message) => callback(message.body));
-      })
-    }
+    if (!this.connection || !this.connection.connected) {
+      console.error("WebSocket connection is not established!");
+      return;
   }
+  if (this.subscription) {
+      this.subscription.unsubscribe(); // Unsubscribe any existing subscription
+  }
+  this.subscription = this.connection.subscribe(destination, message => callback(message.body));
+}
+
 
   // Unsubscribe to clean up the process
   ngOnDestroy(): void {

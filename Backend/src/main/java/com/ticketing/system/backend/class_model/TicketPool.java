@@ -10,11 +10,15 @@ public class TicketPool {
     private Queue<Ticket> ticketQueue;
     private int maximumTicketCapacity;
     private Consumer<String> logListener; // Log listener to handle logs
-    private TicketService ticketService;
+    private final Runnable checkControlState;
 
-    public TicketPool(int maximumTicketCapacity) {
+    public TicketPool(int maximumTicketCapacity, Runnable checkControlState) {
+        if (checkControlState == null) {
+            throw new IllegalArgumentException("checkControlState cannot be null");
+        }
         this.ticketQueue = new LinkedList<>();
         this.maximumTicketCapacity = maximumTicketCapacity;
+        this.checkControlState = checkControlState;
     }
 
     public void setLogListener(Consumer<String> logListener) {
@@ -22,12 +26,13 @@ public class TicketPool {
     }
 
     public synchronized void addTickets(Ticket ticket) {
+        checkControlState.run();
 
         while (ticketQueue.size() >= maximumTicketCapacity) {
             log("Current pool is full! Vendor is waiting to add tickets.");
             try {
                 wait();
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e.getMessage());
             }
@@ -36,22 +41,22 @@ public class TicketPool {
         this.ticketQueue.add(ticket);
         notifyAll();
         log("Ticket added by - " + Thread.currentThread().getName() + ", current ticket amount: " + ticketQueue.size());
-        ticketService.ticketLogDetails(UserType.Vendor, Thread.currentThread().getName(), "Ticket Added", ticket.getEventName());
     }
 
     public synchronized Ticket buyTicket() {
+        checkControlState.run();
+
         while (ticketQueue.isEmpty()) {
             log("No tickets available. Customer is waiting...");
             try {
                 wait();
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e.getMessage());
             }
         }
         Ticket ticket = ticketQueue.poll();
         notifyAll();
         log("Ticket bought by - " + Thread.currentThread().getName() + "tickets left: " + ticketQueue.size());
-        ticketService.ticketLogDetails(UserType.Customer, Thread.currentThread().getName(), "Ticket Bought", ticket.getEventName());
         return ticket;
     }
 
@@ -60,5 +65,4 @@ public class TicketPool {
             logListener.accept(message); // Forward log messages to the listener
         }
     }
-
 }

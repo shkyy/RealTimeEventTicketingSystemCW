@@ -1,24 +1,50 @@
-<div class="configuration-form">
-    <h2>Configuration Settings</h2>
-    <form [formGroup]="form">
-      <label>Total Tickets:</label>
-      <input id="totalTickets" type="number" formControlName="totalTickets"/>
-  
-      <label for="ticketReleaseRate">Ticket Release Rate:</label>
-      <input id="ticketReleaseRate" type="number" formControlName="ticketReleaseRate"/>
-  
-      <label for="customerRetrievalRate">Customer Retrieval Rate:</label>
-      <input id="customerRetrievalRate" type="number" formControlName="customerRetrievalRate"/>
-  
-      <label for="maxTicketCapacity">Max Ticket Capacity:</label>
-      <input id="maxTicketCapacity" type="number" formControlName="maxTicketCapacity"/>
-  
-      <div class="btn-container">
-        <button type="button" (click)="submit()">Start</button>
+<div class="container py-5 configuration-form">
+  <div class="card shadow-sm border-0">
+    
+    <div class="card-body">
+
+      <p class="text-center">Configuration Settings</p>
+      
+      <form [formGroup]="form" class="needs-validation">
+
+        <div class="mb-3">
+          <label class="form-label text-dark">Total Tickets</label>
+          <input id="totalTickets" type="number" formControlName="totalTickets" class="form-control" placeholder="Enter total tickets"/>
+        </div>
+        
+        <div class="mb-3">
+          <label for="ticketReleaseRate" class="form-label text-dark">Ticket Release Rate</label>
+          <input id="ticketReleaseRate" type="number" formControlName="ticketReleaseRate" class="form-control" placeholder="Enter release rate"/>  
+        </div>
+        
+        <div class="mb-3">
+          <label for="customerRetrievalRate" class="form-label text-dark">Customer Retrieval Rate</label>
+          <input id="customerRetrievalRate" type="number" formControlName="customerRetrievalRate" class="form-control" placeholder="Enter retrieval rate"/>  
+        </div>
+        
+        <div class="mb-3">
+          <label for="maxTicketCapacity" class="form-label text-dark">Max Ticket Capacity</label>
+          <input id="maxTicketCapacity" type="number" formControlName="maxTicketCapacity" class="form-control" placeholder="Enter maximum capacity"/>
+        </div>
+        
+      <div class="btn-container d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
+          <button type="button" (click)="submit()" class="btn btn-primary px-5">Submit</button>
+        </div>
       </div>
-    </form>
-
-    <app-log-display/>
-
+        
+      </form>
+    </div>
   </div>
+</div>
+
+<app-log-display
+  *ngIf="showLogDisplay"
+  [logs]="logs"
+  [showLogs]="showLogDisplay"
+  (stop)="onStopLogs()"
+  (start)="onStartLogs()"
+  (pause)="onPauseLogs()"
+/>
+
   

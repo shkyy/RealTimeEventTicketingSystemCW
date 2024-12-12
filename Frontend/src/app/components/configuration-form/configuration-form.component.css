@@ -1,40 +1,51 @@
-div {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    margin-left: 150px;
-    margin-right: 150px;
-    margin-top: 50px;
+p {
+    font-size: 1.9rem;
+    font-weight: normal;
+    color: #607cbf;
     padding: 20px;
+    padding-bottom: 25px;
     overflow-x: hidden;
 }
 
-input[type=number], select {
-    width: 100%;
-    margin: 8px 0;
-    display: inline-block;
-    padding: 12px 20px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
+.card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-button[type=submit] {
-    width: 100%;
-    background-color: #3796f5;
-    color: white;
+.configuration-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-control {
+    border:1px solid #ced4da;
+    border-radius: 7px;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    font: 1em;
+}
+
+.form-control:focus {
+    border-color: #6c757d;
+  box-shadow: 0 0 5px rgba(108, 117, 125, 0.5);
+}
+
+.btn-primary {
+    background-color: #607cbf;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
     padding: 14px 20px;
     margin: 8px 0;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    flex: 1;
+    text-align: center;
 }
 
-button[type=submit]:hover {
-    background-color: #3083d6;
+.btn-primary:hover {
+    background-color: #4f6aa5;
+    transform: scale(1.05);
 }
 
 .btn-container {
-    display: flex;
-    justify-content: space-between;
     gap: 10px;
 }

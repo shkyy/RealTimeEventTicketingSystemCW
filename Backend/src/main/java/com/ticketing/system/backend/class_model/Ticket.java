@@ -1,16 +1,26 @@
 package com.ticketing.system.backend.class_model;
 
+import com.ticketing.system.backend.enums.EventName;
+
 import java.math.BigDecimal;
+import java.util.Random;
 
 public class Ticket {
     private int ticketId;
-    private String eventName;
+    private EventName eventName;
     private BigDecimal ticketPrice;
 
-    public Ticket(int ticketId, String eventName, BigDecimal ticketPrice) {
+    private static final Random random = new Random();
+
+    public Ticket(int ticketId) {
         this.ticketId = ticketId;
-        this.eventName = eventName;
-        this.ticketPrice = ticketPrice;
+        this.eventName = getRandomEvent();
+        this.ticketPrice = this.eventName.getPrice();
+    }
+
+    private EventName getRandomEvent() {
+        EventName[] events = EventName.values();
+        return events[random.nextInt(events.length)];
     }
 
     @Override
@@ -30,12 +40,13 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-    public String getEventName() {
+    public EventName getEventName() {
         return eventName;
     }
 
-    public void setEventName(String eventName) {
+    public void setEventName(EventName eventName) {
         this.eventName = eventName;
+        this.ticketPrice = eventName.getPrice();
     }
 
     public BigDecimal getTicketPrice() {

@@ -11,6 +11,7 @@ public class Main {
 
         int totalTickets = 0;
 
+        System.out.println("\n========== Real-Time Ticketing System ==========\n");
         totalTickets = getValidNumber(totalTickets, "the total number tickets");
         int maxTicketCapacity = getValidNumber(totalTickets, "the maximum number tickets");
         int ticketReleaseRate = getValidNumber(totalTickets, "the ticket release rate");
@@ -46,7 +47,7 @@ public class Main {
             // Start listening for commands
             listenCommands(vendorThreads, customerThreads);
         } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("[Error]: " + e.getMessage());
         }
     }
     private static int getValidNumber(int totalTickets, String valueDescription) {
@@ -67,11 +68,11 @@ public class Main {
                 }
             }
             catch (InputMismatchException e) {
-                System.out.println("Invalid input! Please enter an integer");
+                System.out.println("[Error] Invalid input! Please enter an integer");
                 scanner.nextLine();
             }
             catch (IllegalArgumentException e){
-                System.out.println(e.getMessage() + " Please enter again");
+                System.out.println("[Error] Please enter again." + e.getMessage());
             }
         }
     }
@@ -85,19 +86,28 @@ public class Main {
     }
 
     private static void listenCommands (Thread[] vendorThreads, Thread[] customerThreads) {
+        System.out.println("\n========== Command Menu ==========");
+        System.out.println("1. start  - Start operations");
+        System.out.println("2. stop   - Stop operations");
+        System.out.println("3. resume - Resume operations");
+        System.out.println("4. exit   - Exit the program");
+        System.out.println("===================================");
+
         while (true) {
-            System.out.println("Enter (start, stop, resume, exit): ");
+
+            System.out.print("[Command] Enter your choice: ");
+
             String command = scanner.nextLine().trim().toLowerCase();
 
             switch (command) {
                 case "start":
                     if (!isRunning) {
                         isRunning = true;
-                        System.out.println("Starting operations... "  + "\n");
+                        System.out.println("[Info] Starting operations...\n");
                         startThreads(vendorThreads);
                         startThreads(customerThreads);
                     } else {
-                        System.out.println("Operations are already running." + "\n");
+                        System.out.println("[Warning] Operations are already running.\n");
                     }
                     break;
 
@@ -107,27 +117,27 @@ public class Main {
                         synchronized (Main.class) {
                             Main.class.notifyAll(); // Notify all paused threads
                         }
-                        System.out.println("Resuming operations..." + "\n");
+                        System.out.println("[Info] Resuming operations...\n");
                     } else {
-                        System.out.println("Operations are already running." + "\n");
+                        System.out.println("[Warning] Operations are already running.\n");
                     }
                     break;
 
                 case "stop":
                     if (isRunning) {
                         isRunning = false;
-                        System.out.println("Stopping operations" + "\n");
+                        System.out.println("[Info] Stopping operations...\n");
                     } else {
-                        System.out.println("operations are already stopped" + "\n");
+                        System.out.println("[Warning] Operations are already stopped.\n");
                     }
                     break;
 
                 case "exit":
-                    System.out.println("Exiting program..." + "\n");
+                    System.out.println("[Info] Exiting program...\n");
                     System.exit(0);
 
                 default:
-                    System.out.println("Unknown command." + "\n");
+                    System.out.println("[Error] Unknown command. Please try again.\n");
             }
         }
     }

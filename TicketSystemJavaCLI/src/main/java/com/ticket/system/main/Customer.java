@@ -1,5 +1,8 @@
 package com.ticket.system.main;
-import java.util.concurrent.TimeUnit;
+import com.ticket.system.clients.TicketLogClient;
+import com.ticket.system.main.enums.UserType;
+
+import java.math.BigDecimal;
 
 public class Customer implements Runnable {
     private int retrievalRate;
@@ -31,7 +34,14 @@ public class Customer implements Runnable {
 
                 if (!Main.isRunning) break;
 
-                ticketPool.buyTicket(); // Call method to buyTickets
+                Ticket ticket = new Ticket(i);
+                ticketPool.buyTicket();
+
+                try {
+                    TicketLogClient.sendTicketLog(UserType.Customer, "C" + (i+1), "Ticket bought", ticket.getEventName(), ticket.getTicketPrice());
+                } catch (Exception e) {
+                    System.err.println("Error logging ticket addition: " + e.getMessage());
+                }
 
                 try {
                     Thread.sleep(retrievalRate * 1000); // Retrieving delay

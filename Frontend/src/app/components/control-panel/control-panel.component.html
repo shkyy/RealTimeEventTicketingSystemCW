@@ -1,1 +1,5 @@
-<p>control-panel works!</p>
+<div class="buttons">
+    <button class="btn btn-success" (click)="startLogs()" [disabled]="isRunning">Start</button>
+    <button class="btn btn-warning" (click)="pauseOrResumeLogs()" [disabled]="!isRunning">{{ isPaused ? 'Resume' : 'Pause' }}</button>
+    <button class="btn btn-danger" (click)="stopLogs()" [disabled]="!isRunning">Stop</button>
+</div>

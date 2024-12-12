@@ -1,4 +1,7 @@
 package com.ticket.system.main;
+import com.ticket.system.clients.TicketLogClient;
+import com.ticket.system.main.enums.UserType;
+
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +35,15 @@ public class Vendor implements Runnable {
 
                 if (!Main.isRunning) break;
 
-                Ticket ticket = new Ticket(i, "Event", new BigDecimal("1000"));
+                Ticket ticket = new Ticket(i);
                 ticketPool.addTickets(ticket);
+                // Log the action
+                try {
+                    TicketLogClient.sendTicketLog(UserType.Vendor, "V" + (i+1), "Ticket added", ticket.getEventName(), ticket.getTicketPrice());
+                } catch (Exception e) {
+                    System.err.println("Error logging ticket addition: " + e.getMessage());
+                }
+
                 try {
                     Thread.sleep(releaseInterval * 1000); // To calculate to MS
                 } catch (InterruptedException e) {

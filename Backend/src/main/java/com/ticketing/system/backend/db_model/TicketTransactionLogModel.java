@@ -1,9 +1,12 @@
 package com.ticketing.system.backend.db_model;
 
 
+import com.ticketing.system.backend.enums.EventName;
 import com.ticketing.system.backend.enums.UserType;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Table(name="Ticket_Info_Log")
 @Entity
@@ -14,18 +17,25 @@ public class TicketTransactionLogModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long logId;
 
+    @Enumerated(EnumType.STRING)
     private UserType userType;
+
     private String userId;
     private String action;
-    private String eventName;
+
+    @Enumerated(EnumType.STRING)
+    private EventName eventName;
+
+    private BigDecimal ticketPrice;
 
     public TicketTransactionLogModel() {}
 
-    public TicketTransactionLogModel(UserType userType, String userId, String action, String eventName) {
+    public TicketTransactionLogModel(UserType userType, String userId, String action, EventName eventName, BigDecimal ticketPrice) {
         this.userType = userType;
         this.userId = userId;
         this.action = action;
         this.eventName = eventName;
+        this.ticketPrice = ticketPrice;
     }
 
     public long getLogId() {
@@ -60,11 +70,19 @@ public class TicketTransactionLogModel {
         this.action = action;
     }
 
-    public String getEventName() {
+    public EventName getEventName() {
         return eventName;
     }
 
-    public void setEventName(String eventName) {
+    public void setEventName(EventName eventName) {
         this.eventName = eventName;
+    }
+
+    public BigDecimal getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public void setTicketPrice(BigDecimal ticketPrice) {
+        this.ticketPrice = ticketPrice;
     }
 }

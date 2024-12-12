@@ -1,7 +1,10 @@
 
-<div class="messages">
-    <h3>Ticket Transactions:</h3>
-    <ul>
-      <li *ngFor="let log of logs">{{ log }}</li>
-    </ul>
+<div class="log-modal" *ngIf="showLogs">
+  <div class="modal-content">
+    <h5>Ticket Transactions</h5>
+      <ul class="messages-list">
+        <li *ngFor="let log of logs" class="message-item">{{ log }}</li>
+      </ul>
+      <app-control-panel (start)="startLogs()" (pause)="pauseLogs()" (stop)="stopLogs()"></app-control-panel>
   </div>
+</div>

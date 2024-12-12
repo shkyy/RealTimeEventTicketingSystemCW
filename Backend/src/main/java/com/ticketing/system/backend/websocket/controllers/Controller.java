@@ -35,4 +35,23 @@ public class Controller {
         );
 
     }
+
+    // Pause threads
+    @MessageMapping("/pause")
+    public void pause() {
+        ticketService.pauseThreads();
+    }
+
+    // Resume threads
+    @MessageMapping("/resume")
+    public void resume() {
+        ticketService.resumeThreads();
+    }
+
+    // Stop threads
+    @MessageMapping("/stop")
+    public void stop() {
+        ticketService.stopThreads();
+    }
+
 }
