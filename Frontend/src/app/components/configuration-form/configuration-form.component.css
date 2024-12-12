@@ -49,3 +49,13 @@ p {
 .btn-container {
     gap: 10px;
 }
+
+.success-snackbar {
+    background-color: #222322;
+    color: #4caf50;
+}
+
+.error-snackbar {
+    background-color: #222322;
+    color: #f44335;
+}

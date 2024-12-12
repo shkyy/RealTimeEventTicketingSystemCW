@@ -1,8 +1,4 @@
 package com.ticketing.system.backend.class_model;
-
-import com.ticketing.system.backend.enums.UserType;
-import com.ticketing.system.backend.websocket.TicketService;
-
 import java.util.*;
 import java.util.function.Consumer;
 

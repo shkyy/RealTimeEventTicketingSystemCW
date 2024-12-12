@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../../services/websocket.service';
 import { Config } from '../../interfaces/config';
 import { LogDisplayComponent } from '../log-display/log-display.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-configuration-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, LogDisplayComponent],
+  imports: [ReactiveFormsModule, CommonModule, LogDisplayComponent, MatSnackBarModule],
   templateUrl: './configuration-form.component.html',
   styleUrls: ['./configuration-form.component.css'],
 })
@@ -21,7 +22,7 @@ export class ConfigurationFormComponent implements OnInit{
   logs: string[] = [];
   startListeningLogs = false;
 
-  constructor(private webSocketService: WebSocketService) {
+  constructor(private webSocketService: WebSocketService, private snackBar: MatSnackBar) {
     this.form = new FormGroup({
       totalTickets: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
       ticketReleaseRate: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
@@ -40,6 +41,13 @@ export class ConfigurationFormComponent implements OnInit{
       const config = this.form.value as Config;
       this.webSocketService.send('/app/config', config);
       this.showLogDisplay = true; // Show the modal after submitting the configuration
+    } else {
+      this.snackBar.open('Invalid input. Please fix the errors.', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['error-snackbar']
+      });
     }
   }
 
@@ -64,5 +72,6 @@ export class ConfigurationFormComponent implements OnInit{
     this.startListeningLogs = false;
     this.webSocketService.listen('/topic/tickets', () => {}); // Unsubscribe
     this.form.reset();
+    this.showLogDisplay = false; 
 }
 }
