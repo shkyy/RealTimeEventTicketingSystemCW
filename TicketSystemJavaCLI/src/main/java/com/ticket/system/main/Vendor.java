@@ -2,9 +2,6 @@ package com.ticket.system.main;
 import com.ticket.system.clients.TicketLogClient;
 import com.ticket.system.main.enums.UserType;
 
-import java.math.BigDecimal;
-import java.util.concurrent.TimeUnit;
-
 public class Vendor implements Runnable {
     private final int releaseInterval;
     private final TicketPool ticketPool;
@@ -21,19 +18,8 @@ public class Vendor implements Runnable {
     public void run(){
 
         while (true) {
-            synchronized (this) {
-                while (!Main.isRunning) { // Check the running state
-                    try {
-                        wait(); // Wait for resume notification
-                    } catch (InterruptedException e) {
-                        return; // Exit thread if interrupted
-                    }
-                }
-            }
 
             for (int i = 1; i < totalSellingTickets; i++) {
-
-                if (!Main.isRunning) break;
 
                 Ticket ticket = new Ticket(i);
                 ticketPool.addTickets(ticket);

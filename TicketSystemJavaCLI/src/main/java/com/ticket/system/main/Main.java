@@ -88,8 +88,6 @@ public class Main {
     private static void listenCommands (Thread[] vendorThreads, Thread[] customerThreads) {
         System.out.println("\n========== Command Menu ==========");
         System.out.println("1. start  - Start operations");
-        System.out.println("2. stop   - Stop operations");
-        System.out.println("3. resume - Resume operations");
         System.out.println("4. exit   - Exit the program");
         System.out.println("===================================");
 
@@ -111,26 +109,6 @@ public class Main {
                     }
                     break;
 
-                case "resume":
-                    if (!isRunning) {
-                        isRunning = true;
-                        synchronized (Main.class) {
-                            Main.class.notifyAll(); // Notify all paused threads
-                        }
-                        System.out.println("[Info] Resuming operations...\n");
-                    } else {
-                        System.out.println("[Warning] Operations are already running.\n");
-                    }
-                    break;
-
-                case "stop":
-                    if (isRunning) {
-                        isRunning = false;
-                        System.out.println("[Info] Stopping operations...\n");
-                    } else {
-                        System.out.println("[Warning] Operations are already stopped.\n");
-                    }
-                    break;
 
                 case "exit":
                     System.out.println("[Info] Exiting program...\n");

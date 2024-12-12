@@ -20,19 +20,8 @@ public class Customer implements Runnable {
     public void run() {
 
         while (true) {
-            synchronized (this) {
-                while (!Main.isRunning) { // Check the running state
-                    try {
-                        wait(); // Wait for resume notification
-                    } catch (InterruptedException e) {
-                        return; // Exit thread if interrupted
-                    }
-                }
-            }
 
             for (int i = 0; i < ticketQuantity; i++) {
-
-                if (!Main.isRunning) break;
 
                 Ticket ticket = new Ticket(i);
                 ticketPool.buyTicket();
